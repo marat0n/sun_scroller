@@ -16,13 +16,28 @@ class SunPage extends StatefulWidget {
 class SunPageState extends State<SunPage> {
   double sunState = 0;
 
-  getColor() {
+  final gradients = [
+    [
+      Colors.blue[200]!,
+      Colors.blue[600]!
+    ],
+    [
+      Colors.deepOrange[300]!,
+      Colors.pink[300]!
+    ],
+    [
+      Colors.purple[700]!,
+      Colors.deepPurple[900]!
+    ]
+  ];
+
+  getGradient() {
     if (sunState < 33) {
-      return Colors.blue[200];
+      return gradients[0];
     } else if (sunState < 66) {
-      return Colors.deepOrange[300];
+      return gradients[1];
     } else {
-      return Colors.purple[700];
+      return gradients[2];
     }
   }
 
@@ -33,7 +48,13 @@ class SunPageState extends State<SunPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         duration: const Duration(milliseconds: 500),
-        color: getColor(),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: getGradient()
+          )
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
