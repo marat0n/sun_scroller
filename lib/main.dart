@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
-  runApp(const MaterialApp(
-    home: SunPage(),
-  ));
+  runApp(const MaterialApp(home: SunPage()));
 }
 
 class SunPage extends StatefulWidget {
@@ -14,69 +13,48 @@ class SunPage extends StatefulWidget {
 }
 
 class SunPageState extends State<SunPage> {
-  double sunState = 0;
-
-  final gradients = [
-    [
-      Colors.blue[200]!,
-      Colors.blue[600]!
-    ],
-    [
-      Colors.deepOrange[300]!,
-      Colors.pink[300]!
-    ],
-    [
-      Colors.purple[700]!,
-      Colors.deepPurple[900]!
-    ]
-  ];
+  double _sunState = 0;
+  set sunState(double value) {
+    _sunState = max(min(value, 500), 0);
+  }
 
   getGradient() {
-    if (sunState < 33) {
-      return gradients[0];
-    } else if (sunState < 66) {
-      return gradients[1];
-    } else {
-      return gradients[2];
+    if (_sunState < 100) {
+      return [const Color(0xFF90CAF9), const Color(0xFF1E88E5)];
     }
+    if (_sunState < 400) {
+      return [const Color(0xFFFF8A65), const Color(0xFFF06292)];
+    }
+    return [const Color(0xFF7B1FA2), const Color(0xFF311B92)];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedContainer(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        duration: const Duration(milliseconds: 500),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: getGradient()
-          )
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              margin: EdgeInsets.only(top: 50 + sunState * 4),
-              decoration: BoxDecoration(
-                color: Colors.yellow[700],
-                borderRadius: BorderRadius.circular(25)
+        body: GestureDetector(
+      onVerticalDragUpdate: (details) =>
+          setState(() => sunState = details.localPosition.dy - 115),
+      child: AnimatedContainer(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          duration: const Duration(milliseconds: 500),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: getGradient())),
+          child: Column(
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                margin: EdgeInsets.only(top: 80 + _sunState),
+                decoration: BoxDecoration(
+                    color: Colors.yellow[700],
+                    borderRadius: BorderRadius.circular(35)),
               ),
-            ),
-            Slider(
-              value: sunState,
-              max: 100,
-              activeColor: Colors.black,
-              inactiveColor: Colors.white,
-              onChanged: (value) => setState(() => sunState = value)
-            )
-          ],
-        ),
-      )
-    );
+            ],
+          )),
+    ));
   }
 }
